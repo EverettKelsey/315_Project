@@ -1,5 +1,5 @@
 //This is CS315 project which implements Dijkstras akgorithm to find the shortest path and simulates packets routing from router to router.
-// the Dijkstras algorithm was found online to help implementation.
+// the Dijkstras algorithm was found online to help implementation. Using this link:https://www.geeksforgeeks.org/dsa/dijkstras-shortest-path-algorithm-greedy-algo-7/
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -14,7 +14,7 @@ vector<int> algorithm(vector<vector<pair<int,int>>>& adj, int src) {
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; //priority queue min-heap
 
     vector<int> dist(size, INT_MAX); //distance from each node
-
+    int weight = 0;
     // Distance from source to itself is 0
     dist[src] = 0;
     pq.emplace(0, src); //push this onto the pq
@@ -37,10 +37,13 @@ vector<int> algorithm(vector<vector<pair<int,int>>>& adj, int src) {
             if (dist[u] + w < dist[v]) {
                 dist[v] = dist[u] + w;   
                 pq.emplace(dist[v], v);
+                weight = v;
+            } else {
+                weight = dist[u] + w;
             }
         }
     }
-
+    cout<<weight<<endl;
     // Return the final shortest distances from the source
     return dist;
 }
@@ -58,6 +61,6 @@ int main() {
     vector<int> result = algorithm(adj, src);
     for (int i = 0; i < result.size(); i++) {
     cout << "Distance from source to vertex " << i << " is " << result[i] << endl;
-}
+    }
     return 0;
 }
