@@ -17,6 +17,10 @@ void simulatePackets() { //add arguments
     //if wanted we could use some imagery and draw the graph out either in terminal or some gui thing
 }
 
+void drawGraph() {
+    //possible fcn to have
+}
+
 int main() {
     //main right now is a bunch of tests to make sure my algorithm works properly
     int src = 0;
