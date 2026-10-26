@@ -8,8 +8,13 @@
 #include "NetworkGraph.h"
 using namespace std;
 
-void simulatePackets() {
-    
+void simulatePackets() { //add arguments
+    //check if destination is source, if so success
+    //check to make sure ttl isnt gone
+    //give out the best route to destination using the next hop fcn
+    //also give out the cost of this route
+    //if next hop is -1 then the packet was dropped
+    //if wanted we could use some imagery and draw the graph out either in terminal or some gui thing
 }
 
 int main() {

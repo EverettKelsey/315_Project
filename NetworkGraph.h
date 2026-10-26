@@ -82,7 +82,7 @@ vector<int> Network::getNextHop(int src) {
 void Network::loadNetwork(string filename) {
     //INSERT CODE HERE
     //James can do this one
-    //have user input write to the network.txt file and then put the values from that file into the correct graph values
+    //have user input write to the network.txt file and then put the values from that file into the adj list
 }
 
 #endif
