@@ -8,6 +8,10 @@
 #include "NetworkGraph.h"
 using namespace std;
 
+void simulatePackets() {
+    
+}
+
 int main() {
     //main right now is a bunch of tests to make sure my algorithm works properly
     int src = 0;
