@@ -33,3 +33,4 @@ A function simulatePacketFlow(Packet pkt, vector<unordered_map<int, int>>& routi
     Look up next hop using the current router's routing table. If next hop is -1, drop the packet (log "Destination Unreachable").
 
     Move packet to the next hop router and increment hop count.
+test
