@@ -16,7 +16,7 @@ Router or NetworkGraph class to encapsulate the adjacency list.
 
 loadTopology(string filename): Parses the text file and populates the graph.
 
-computeRoutingTable(int routerId): Runs Dijkstra's algorithm and returns a next-hop lookup map (destination -> next_hop).
+nextHop(int routerId): Runs Dijkstra's algorithm and returns a next-hop lookup map (destination -> next_hop).
 
 Define a Packet data structure containing source, destination, payload, and a TTL (Time-To-Live) counter to prevent infinite routing loops.
 
