@@ -1,0 +1,35 @@
+Build a robust file parser that reads a network topology from a configuration file
+Input file format:
+# Number of Routers
+5
+# Edges: Source, Destination, Weight (Latency in ms)
+0 1 4
+0 2 8
+1 2 3
+1 4 6
+2 3 2
+3 4 10
+
+Implement Dijkstra's algorithm to generate Next-Hop Forwarding Tables for every router in the network.
+
+Router or NetworkGraph class to encapsulate the adjacency list.
+
+loadTopology(string filename): Parses the text file and populates the graph.
+
+computeRoutingTable(int routerId): Runs Dijkstra's algorithm and returns a next-hop lookup map (destination -> next_hop).
+
+Define a Packet data structure containing source, destination, payload, and a TTL (Time-To-Live) counter to prevent infinite routing loops.
+
+Build a simulation engine that takes packets and passes them across routers step-by-step using the next-hop tables.
+
+Track and report performance metrics (total path latency, hop count, successful deliveries vs. dropped packets).
+
+A function simulatePacketFlow(Packet pkt, vector<unordered_map<int, int>>& routingTables) that executes a loop:
+
+    Check if current router is the destination. If so, log successful delivery.
+
+    Check TTL. If TTL reaches 0, drop the packet (log "TTL Expired").
+
+    Look up next hop using the current router's routing table. If next hop is -1, drop the packet (log "Destination Unreachable").
+
+    Move packet to the next hop router and increment hop count.
