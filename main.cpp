@@ -9,6 +9,7 @@
 using namespace std;
 
 int main() {
+    //main right now is a bunch of tests to make sure my algorithm works properly
     int src = 0;
 
     Network network(5);

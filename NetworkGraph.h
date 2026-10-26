@@ -1,5 +1,5 @@
 #ifndef NETWORK_GRAPH_H
-#define NETWORK_H
+#define NETWORK_GRAPH_H
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -73,7 +73,7 @@ vector<int> Network::getNextHop(int src) {
             nextHop[i] = curr; //store the next hop destination (curr is looking at what node needs to be hit next to reach dest i)
         }
     }
-    // Return tthe next hop to get to location
+    // Return the next hop to get to location
     return nextHop;
 
 }
