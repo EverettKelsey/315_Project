@@ -12,4 +12,9 @@ typedef struct Packet {
     Packet(int pID, int src, int dst, int ttl, std::string msg) : packetID(pID), source(src), dest(dst), ttl(ttl), payload(msg) {} //constructor for calling the packet
 } Packet;
 
+typedef struct Switch {
+    int ports; // number of ports
+    int MAC; //mac address will need to define a mac address table
+} Switch;
+
 #endif
