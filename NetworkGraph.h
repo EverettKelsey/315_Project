@@ -22,11 +22,12 @@ class Network {
         int countVertices() const; //returns V so we know router amount;
         vector<int> getNextHop(int src); //getNextHop fcn using Dijkstras
         void loadNetwork(string filename); //James' part where the user input decides the topology of the network
+        int getCount(int source, int destination); // returns the weight between 2 networks
 };
 
 void Network::addEdge(int u, int v, int weight) {
-    adj[u].push_back({v,weight});
-    adj[v].push_back({u,weight}); //we are assuming undirected network lines here
+    adj[u].push_back({v, weight});
+    adj[v].push_back({u, weight}); //we are assuming undirected network lines here
 }
 
 int Network::countVertices() const {
@@ -75,14 +76,22 @@ vector<int> Network::getNextHop(int src) {
     }
     // Return the next hop to get to location
     return nextHop;
-
 }
-
 
 void Network::loadNetwork(string filename) {
     //INSERT CODE HERE
     //James can do this one
     //have user input write to the network.txt file and then put the values from that file into the adj list
+}
+
+int Network::getCount(int source, int destination) {
+    for (const auto& p : adj[source]) {
+        if (p.first == destination) {
+            return p.second;
+        }
+    }
+
+    return 0;
 }
 
 #endif

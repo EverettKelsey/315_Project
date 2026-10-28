@@ -1,4 +1,4 @@
-//This is CS315 project which implements Dijkstras akgorithm to find the shortest path and simulates packets routing from router to router.
+// This is CS315 project which implements Dijkstras akgorithm to find the shortest path and simulates packets routing from router to router.
 // the Dijkstras algorithm was found online to help implementation. Using this link:https://www.geeksforgeeks.org/dsa/dijkstras-shortest-path-algorithm-greedy-algo-7/
 #include <iostream>
 #include <vector>
@@ -8,13 +8,50 @@
 #include "NetworkGraph.h"
 using namespace std;
 
-void simulatePackets() { //add arguments
-    //check if destination is source, if so success
-    //check to make sure ttl isnt gone
-    //give out the best route to destination using the next hop fcn
-    //also give out the cost of this route
-    //if next hop is -1 then the packet was dropped
-    //if wanted we could use some imagery and draw the graph out either in terminal or some gui thing
+// returns true if succesful and false if failed
+bool simulatePackets(Network network, Packet package) {
+    int cost = 0;
+    vector<int> steps = {package.source};
+    
+    // check if destination is source, if so success
+    while (package.dest != steps.back()) {
+        // check to make sure ttl isnt gone
+        if (package.ttl <= 0) {
+            cerr << "Package time to live has expired." << endl;
+            return false; // failed delivery
+        }
+        
+        // give out the best route to destination using the next hop fcn
+        vector<int> hopOptions = network.getNextHop(steps.back());
+        steps.push_back(hopOptions[package.dest]);
+        
+        // give out the cost of this route
+        cost += network.getCount(steps[steps.size() - 2], steps.back());
+
+        // if next hop is -1 then the packet was dropped
+        if (steps.back() == -1) {
+            cout << "Package was dropped." << endl;
+            break;
+        }
+    }
+    
+    
+    // printing best route
+    for (int i = 0; i < steps.size(); i++) {
+        cout << steps[i];
+        
+        if (i != steps.size() - 1) {
+            cout << " -> ";
+        }
+    }
+    cout << endl;
+    
+    // also give out the cost of this route
+    cout << "Total cost of delivery: " << cost << endl;
+
+    return true; // succesful delivery
+
+    // if wanted we could use some imagery and draw the graph out either in terminal or some gui thing
 }
 
 void drawGraph() {
