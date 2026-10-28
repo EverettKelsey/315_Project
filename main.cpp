@@ -69,6 +69,10 @@ int main() {
     network.addEdge(1, 2, 3);
     network.addEdge(2, 3, 2);
     network.addEdge(3, 4, 10);
+
+
+    Packet package(1818, 0, 3, 1, "name");
+    bool a = simulatePackets(network, package);
     
     vector<int> router0Table = network.getNextHop(0);
     cout << "Next-Hop Routing Table for Router 0:\n";

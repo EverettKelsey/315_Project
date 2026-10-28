@@ -2,7 +2,7 @@ Build a robust file parser that reads a network topology from a configuration fi
 Input file format:
 # Number of Routers
 5
-# Edges: Source, Destination, Weight (Latency in ms)
+Source, Destination, Weight (Latency in ms)
 0 1 4
 0 2 8
 1 2 3

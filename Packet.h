@@ -13,8 +13,9 @@ typedef struct Packet {
 } Packet;
 
 typedef struct Switch {
-    int ports; // number of ports
+    int ports[5]; // number of ports (no more than 5 for peace of mind)
     int MAC; //mac address will need to define a mac address table
+    int switchID;
 } Switch;
 
 #endif
