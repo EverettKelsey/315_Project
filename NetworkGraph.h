@@ -5,6 +5,8 @@
 #include <queue>
 #include <climits>
 #include <fstream>
+#include <string>
+#include <sstream>
 using namespace std;
 
 class Network {
@@ -79,11 +81,34 @@ vector<int> Network::getNextHop(int src) {
 }
 
 void Network::loadNetwork(string filename) {
-    //INSERT CODE HERE
-    //James can do this one
-    //have user input write to the network.txt file and then put the values from that file into the adj list
-}
+    ifstream in(filename); //open the file to read in the network topology
+    if (!in) { //error checking to see if the file opened correctly
+        cout << "Error: could not open " << filename << endl;
+        return;
+    }
+    string line;
+    int lineNum = 0;
+    bool gotCount = false;
 
+    while (getline(in, line)) {
+        lineNum++;
+        if (line.empty() || line[0]== '#') continue; //skip empty lines and comments
+
+        stringstream ss(line); // to >> numbers out of the line
+
+        if (!gotCount) {
+            ss >> V; //first line is the number of routers
+            adj.assign(V, {});
+            gotCount = true;
+            cout << "Number of Routers: " << V << endl;
+        } else {
+            int u, v, w; // variables to hold the edge and weight
+            ss >> u >> v >> w; //read in the edge and weight
+            addEdge(u, v, w); //add the edge to the adjacency list
+            cout << "Added edge: " << u << " <--(" << w << ")--> " << v << endl; //print out the edge that was added
+        }
+    }
+}
 int Network::getCount(int source, int destination) {
     for (const auto& p : adj[source]) {
         if (p.first == destination) {
