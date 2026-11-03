@@ -1,6 +1,7 @@
 // This is CS315 project which implements Dijkstras akgorithm to find the shortest path and simulates packets routing from router to router.
 // the Dijkstras algorithm was found online to help implementation. Using this link:https://www.geeksforgeeks.org/dsa/dijkstras-shortest-path-algorithm-greedy-algo-7/
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <queue>
 #include <climits>
@@ -59,8 +60,64 @@ bool simulatePackets(Network network, Packet package) {
     // if wanted we could use some imagery and draw the graph out either in terminal or some gui thing
 }
 
-void drawGraph() {
-    //possible fcn to have
+void drawGraph(Network network) {
+    // create a text file to store the ascii art
+    ofstream graphFile("Graph.txt");
+    if (!graphFile.is_open()) {
+        cout << "Error in openning file!" << endl;
+        return;
+    }
+    
+    // create each node with each having a height of the number of nodes
+    for (int i = 0; i < network.countVertices(); i++) {
+        graphFile << " _______ " << endl;
+        
+        for (int j = 0; j < network.countVertices() - 2; j++) {
+            if (j == network.countVertices() / 2) {
+                int spaces = 5 - (i > 10 ? 1 : 0); 
+                graphFile << "| " <<  i << string(spaces, ' ') << "|" << endl;
+                continue;
+            }
+            
+            graphFile << "|       |" << endl;
+        }
+        
+        graphFile << "|_______|" << endl << endl;
+    }
+    
+    graphFile.close();
+
+    // ofstream graphFile("Graph.txt");
+    // if (!graphFile.is_open()) {
+    //     cout << "Error in openning file!" << endl;
+    //     return;
+    // }
+
+    // // read file into string
+    // string graph = readTextFile("Graph.txt");
+    
+    // for (int i = 0; i < network.countVertices(); i++) {
+        
+    // }
+    
+    // graphFile.close();
+
+    // read text file and display node
+}
+
+string readTextFile(string fileName) {
+    ifstream readTextFile(fileName);
+    if (!readTextFile.is_open()) {
+        cout << "Error in openning file!" << endl;
+        return;
+    }
+
+    string fileRead = "";
+    while (getline(readTextFile, graph));
+
+    readTextFile.close();
+
+    return fileRead;
 }
 
 int main() {
