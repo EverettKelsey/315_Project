@@ -106,14 +106,15 @@ void drawGraph(Network network) {
 }
 
 string readTextFile(string fileName) {
+    string fileRead = "";
+
     ifstream readTextFile(fileName);
     if (!readTextFile.is_open()) {
         cout << "Error in openning file!" << endl;
-        return;
+        return fileRead;
     }
 
-    string fileRead = "";
-    while (getline(readTextFile, graph));
+    while (getline(readTextFile, fileRead));
 
     readTextFile.close();
 
