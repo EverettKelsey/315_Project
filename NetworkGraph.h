@@ -7,7 +7,27 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <limits>
+#include "Packet.h"
 using namespace std;
+
+// keeps asking until the user types a whole number between minVal and maxVal
+int readInt(string prompt, int minVal, int maxVal) {
+    int value;
+    while (true) {
+        cout << prompt;
+        if (cin >> value && value >= minVal && value <= maxVal) {
+            return value; // good input
+        }
+        if (cin.eof()) { // input ran out (Ctrl+D)
+            cout << "\nNo more input, exiting." << endl;
+            exit(1);
+        }
+        cout << "Invalid input. Enter a whole number from " << minVal << " to " << maxVal << "." << endl;
+        cin.clear(); // reset the fail state
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // throw away the bad line
+    }
+}
 
 class Network {
     private:
@@ -23,7 +43,7 @@ class Network {
         void addEdge(int u, int v, int weight); //adds an edge to adj
         int countVertices() const; //returns V so we know router amount;
         vector<int> getNextHop(int src); //getNextHop fcn using Dijkstras
-        void loadNetwork(string filename); //James' part where the user input decides the topology of the network
+        Packet loadNetwork(string filename); //James' part where the user input decides the topology of the network
         int getCount(int source, int destination); // returns the weight between 2 networks
 };
 
@@ -80,11 +100,35 @@ vector<int> Network::getNextHop(int src) {
     return nextHop;
 }
 
-void Network::loadNetwork(string filename) {
+Packet Network::loadNetwork(string filename) {
+    // ---- Part 1: ask the user for the network ----
+    int routers = readInt("Enter number of routers: ", 1, 100);
+    int edges = readInt("Enter number of connections: ", 0, routers * (routers - 1) / 2);
+
+    // ---- Part 2: write it to the file ----
+    {
+        ofstream out(filename);
+        if (!out) {
+            cout << "Error: could not write " << filename << endl;
+            exit(1);
+        }
+        out << "# Number of Routers" << endl;
+        out << routers << endl;
+        out << "# Edges: Source, Destination, Weight (Latency in ms)" << endl;
+        for (int i = 0; i < edges; i++) {
+            cout << "Connection " << i + 1 << ":" << endl;
+            int u = readInt("  Router A: ", 0, routers - 1);
+            int v = readInt("  Router B: ", 0, routers - 1);
+            int w = readInt("  Latency (ms): ", 1, 10000);
+            out << u << " " << v << " " << w << endl;
+        }
+    } // out closes here so the file is fully saved before we read it
+
+    // ---- Part 3: read the file back into the graph ----
     ifstream in(filename); //open the file to read in the network topology
     if (!in) { //error checking to see if the file opened correctly
         cout << "Error: could not open " << filename << endl;
-        return;
+        exit(1);
     }
     string line;
     int lineNum = 0;
@@ -92,7 +136,7 @@ void Network::loadNetwork(string filename) {
 
     while (getline(in, line)) {
         lineNum++;
-        if (line.empty() || line[0]== '#') continue; //skip empty lines and comments
+        if (line.empty() || line[0] == '#') continue; //skip empty lines and comments
 
         stringstream ss(line); // to >> numbers out of the line
 
@@ -108,7 +152,21 @@ void Network::loadNetwork(string filename) {
             cout << "Added edge: " << u << " <--(" << w << ")--> " << v << endl; //print out the edge that was added
         }
     }
+
+    // ---- Part 4: ask for the packet and return it ----
+    cout << "\nPacket setup:" << endl;
+    int src = readInt("  Source router: ", 0, V - 1);
+    int dst = readInt("  Destination router: ", 0, V - 1);
+    int ttl = readInt("  TTL (max hops): ", 1, 255);
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // clear the leftover newline before getline
+    string msg;
+    cout << "  Message: ";
+    getline(cin, msg);
+
+    return Packet(1, src, dst, ttl, msg);
 }
+
 int Network::getCount(int source, int destination) {
     for (const auto& p : adj[source]) {
         if (p.first == destination) {

@@ -125,18 +125,10 @@ int main() {
     //main right now is a bunch of tests to make sure my algorithm works properly
     int src = 0;
 
-    Network network(5);
-    network.addEdge(0, 1, 4);
-    network.addEdge(0, 2, 8);
-    network.addEdge(1, 4, 6);
-    network.addEdge(1, 2, 3);
-    network.addEdge(2, 3, 2);
-    network.addEdge(3, 4, 10);
-
-
-    Packet package(1818, 0, 3, 1, "name");
+    Network network(0); // size gets set by loadNetwork
+    Packet package = network.loadNetwork("network.txt"); // asks user for network + packet
     bool a = simulatePackets(network, package);
-    
+
     vector<int> router0Table = network.getNextHop(0);
     cout << "Next-Hop Routing Table for Router 0:\n";
     for (int i = 0; i < network.countVertices(); i++) {
