@@ -60,11 +60,59 @@ bool simulatePackets(Network network, Packet package) {
     // if wanted we could use some imagery and draw the graph out either in terminal or some gui thing
 }
 
+string readTextFile(Network network, string fileName, int nodeIndex) {
+    string fileRead = "";
+    string lineRead = "";
+
+    ifstream readTextFile(fileName);
+    if (!readTextFile.is_open()) {
+        cerr << "Error in openning file!" << endl;
+        return fileRead;
+    }
+
+    int nodeNumber = -1;
+    int connection = 1;
+    bool placed = false;
+
+    while (getline(readTextFile, lineRead)) {
+        fileRead += lineRead;
+        
+        // checking to see if a new node has been reached
+        if (lineRead.find("_") != string::npos && lineRead.find("|") == string::npos) {
+            nodeNumber++;
+            placed = false;
+        }
+        
+        if (nodeIndex <= nodeNumber) {
+            if (lineRead.front() != ' ' && lineRead.find("-") == string::npos && nodeNumber == nodeIndex) {
+                if (network.getCount(nodeIndex, connection) != -100) {
+                    fileRead += string(5 * connection, '-') + "o " + to_string(network.getCount(nodeIndex, connection));
+                    connection++;
+                }
+            }
+            
+            if (lineRead.front() != ' ' && lineRead.find("-") == string::npos && nodeNumber != nodeIndex) {
+                if (network.getCount(nodeIndex, nodeNumber) != -100 && !placed) {
+                    fileRead += string(5 * nodeNumber, '-') + "o " + to_string(network.getCount(nodeIndex, nodeNumber));
+                    placed = true;
+                }
+            }
+        }
+        
+        
+        fileRead += '\n';
+    }
+
+    readTextFile.close();
+
+    return fileRead;
+}
+
 void drawGraph(Network network) {
     // create a text file to store the ascii art
     ofstream graphFile("Graph.txt");
     if (!graphFile.is_open()) {
-        cout << "Error in openning file!" << endl;
+        cerr << "Error in openning file!" << endl;
         return;
     }
     
@@ -73,8 +121,8 @@ void drawGraph(Network network) {
         graphFile << " _______ " << endl;
         
         for (int j = 0; j < network.countVertices() - 2; j++) {
-            if (j == network.countVertices() / 2) {
-                int spaces = 5 - (i > 10 ? 1 : 0); 
+            if (j == floor(((float)network.countVertices() - 2) / 2)) {
+                int spaces = 5 - (i >= 10 ? 1 : 0); 
                 graphFile << "| " <<  i << string(spaces, ' ') << "|" << endl;
                 continue;
             }
@@ -82,43 +130,28 @@ void drawGraph(Network network) {
             graphFile << "|       |" << endl;
         }
         
-        graphFile << "|_______|" << endl << endl;
+        graphFile << "|_______|" << endl;
     }
     
     graphFile.close();
 
-    // ofstream graphFile("Graph.txt");
-    // if (!graphFile.is_open()) {
-    //     cout << "Error in openning file!" << endl;
-    //     return;
-    // }
-
-    // // read file into string
-    // string graph = readTextFile("Graph.txt");
-    
-    // for (int i = 0; i < network.countVertices(); i++) {
+    for (int i = 0; i < network.countVertices(); i++) {
+        // inputing file to string
+        string graph = readTextFile(network, "Graph.txt", i);
         
-    // }
+        // resetting text file
+        graphFile.open("Graph.txt");
+        if (!graphFile.is_open()) {
+            cout << "Error in openning file!" << endl;
+            return;
+        }
+        
+        graphFile << graph;
     
-    // graphFile.close();
-
-    // read text file and display node
-}
-
-string readTextFile(string fileName) {
-    string fileRead = "";
-
-    ifstream readTextFile(fileName);
-    if (!readTextFile.is_open()) {
-        cout << "Error in openning file!" << endl;
-        return fileRead;
+        graphFile.close();   
     }
 
-    while (getline(readTextFile, fileRead));
-
-    readTextFile.close();
-
-    return fileRead;
+    // read text file and display node
 }
 
 int main() {

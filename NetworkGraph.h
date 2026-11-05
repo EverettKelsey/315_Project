@@ -174,7 +174,7 @@ int Network::getCount(int source, int destination) {
         }
     }
 
-    return 0;
+    return -100;
 }
 
 #endif
