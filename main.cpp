@@ -3,11 +3,41 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <queue>
-#include <climits>
 #include "Packet.h"
 #include "NetworkGraph.h"
 using namespace std;
+
+void drawGraph(Network network, int source, int destination) {
+    // create a text file to store the ascii art
+    ofstream graphFile("Graph.txt", ios::app);
+    if (!graphFile.is_open()) {
+        cerr << "Error in openning file!" << endl;
+        return;
+    }
+    
+    // create each node with each having a height of the number of nodes
+    graphFile << " _______ " << endl;
+    graphFile << "|       |" << endl;
+
+    int spaces = 3 - (source >= 10 ? 1 : 0); 
+    graphFile << "|   " <<  source << string(spaces, ' ') << "|" << endl;
+    
+    graphFile << "|_______|" << endl;
+    
+    // getting the weight between the 2 nodes
+    int weight = network.getCount(source, destination);
+    
+    if (weight != -100) {
+        graphFile << "    |" << endl;
+        graphFile << "    | " <<  weight << endl;
+        graphFile << "    |" << endl;
+        graphFile << "    v" << endl;
+    }
+    
+    graphFile.close();
+
+    // read text file and display node
+}
 
 // returns true if succesful and false if failed
 bool simulatePackets(Network network, Packet package) {
@@ -37,14 +67,18 @@ bool simulatePackets(Network network, Packet package) {
         }
     }
     
+    // resetting text file
+    ofstream graphFile("Graph.txt");
+    if (!graphFile.is_open()) {
+        cerr << "Error in openning file!" << endl;
+        return false;
+    }
+    graphFile << "Fastest route to destination:" << endl;
+    graphFile.close();
     
     // printing best route
     for (int i = 0; i < steps.size(); i++) {
-        cout << steps[i];
-        
-        if (i != steps.size() - 1) {
-            cout << " -> ";
-        }
+        drawGraph(network, steps[i], steps[i + 1]);
     }
     cout << endl;
     
@@ -56,102 +90,6 @@ bool simulatePackets(Network network, Packet package) {
     cout << "Time left in package: " << ttlCount << endl;
 
     return true; // succesful delivery
-
-    // if wanted we could use some imagery and draw the graph out either in terminal or some gui thing
-}
-
-string readTextFile(Network network, string fileName, int nodeIndex) {
-    string fileRead = "";
-    string lineRead = "";
-
-    ifstream readTextFile(fileName);
-    if (!readTextFile.is_open()) {
-        cerr << "Error in openning file!" << endl;
-        return fileRead;
-    }
-
-    int nodeNumber = -1;
-    int connection = 1;
-    bool placed = false;
-
-    while (getline(readTextFile, lineRead)) {
-        fileRead += lineRead;
-        
-        // checking to see if a new node has been reached
-        if (lineRead.find("_") != string::npos && lineRead.find("|") == string::npos) {
-            nodeNumber++;
-            placed = false;
-        }
-        
-        if (nodeIndex <= nodeNumber) {
-            if (lineRead.front() != ' ' && lineRead.find("-") == string::npos && nodeNumber == nodeIndex) {
-                if (network.getCount(nodeIndex, connection) != -100) {
-                    fileRead += string(5 * connection, '-') + "o " + to_string(network.getCount(nodeIndex, connection));
-                    connection++;
-                }
-            }
-            
-            if (lineRead.front() != ' ' && lineRead.find("-") == string::npos && nodeNumber != nodeIndex) {
-                if (network.getCount(nodeIndex, nodeNumber) != -100 && !placed) {
-                    fileRead += string(5 * nodeNumber, '-') + "o " + to_string(network.getCount(nodeIndex, nodeNumber));
-                    placed = true;
-                }
-            }
-        }
-        
-        
-        fileRead += '\n';
-    }
-
-    readTextFile.close();
-
-    return fileRead;
-}
-
-void drawGraph(Network network) {
-    // create a text file to store the ascii art
-    ofstream graphFile("Graph.txt");
-    if (!graphFile.is_open()) {
-        cerr << "Error in openning file!" << endl;
-        return;
-    }
-    
-    // create each node with each having a height of the number of nodes
-    for (int i = 0; i < network.countVertices(); i++) {
-        graphFile << " _______ " << endl;
-        
-        for (int j = 0; j < network.countVertices() - 2; j++) {
-            if (j == floor(((float)network.countVertices() - 2) / 2)) {
-                int spaces = 5 - (i >= 10 ? 1 : 0); 
-                graphFile << "| " <<  i << string(spaces, ' ') << "|" << endl;
-                continue;
-            }
-            
-            graphFile << "|       |" << endl;
-        }
-        
-        graphFile << "|_______|" << endl;
-    }
-    
-    graphFile.close();
-
-    for (int i = 0; i < network.countVertices(); i++) {
-        // inputing file to string
-        string graph = readTextFile(network, "Graph.txt", i);
-        
-        // resetting text file
-        graphFile.open("Graph.txt");
-        if (!graphFile.is_open()) {
-            cout << "Error in openning file!" << endl;
-            return;
-        }
-        
-        graphFile << graph;
-    
-        graphFile.close();   
-    }
-
-    // read text file and display node
 }
 
 int main() {
@@ -164,9 +102,5 @@ int main() {
 
     vector<int> router0Table = network.getNextHop(0);
     cout << "Next-Hop Routing Table for Router 0:\n";
-    for (int i = 0; i < network.countVertices(); i++) {
-        if (i == 0) continue;
-        cout << "Destination " << i << " -> Next Hop: " << router0Table[i] <<endl;
-    }
     return 0;
 }
